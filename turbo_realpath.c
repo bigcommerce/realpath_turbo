@@ -41,7 +41,6 @@ PHP_INI_END()
 PHP_RINIT_FUNCTION(turbo_realpath)
 {
     char *basedir = INI_STR("realpath_cache_basedir");
-    		
     char *safe_mode = INI_STR("realpath_cache_safe_mode");
     char *disabled_functions = INI_STR("disable_functions");
     char *risky_functions = "link,symlink";
@@ -60,31 +59,31 @@ PHP_RINIT_FUNCTION(turbo_realpath)
         zend_string *safe_mode2;
         safe_mode2 = zend_string_init(safe_mode, strlen(safe_mode), 0);
         zend_string *smstring;
-        smstring = zend_string_init("open_basedir", sizeof("open_basedir") - 1, 0);
+        smstring = zend_string_init("safe_mode", sizeof("safe_mode") - 1, 0);
         zend_alter_ini_entry(smstring, safe_mode2, PHP_INI_SYSTEM, PHP_INI_STAGE_ACTIVATE);
     }
 
     switch(security) {
-	// check disabled functions for symlink and link entries
-	case 1:
-	    if(strlen(disabled_functions) > 0) {
-		new_functions = emalloc(strlen(disabled_functions) + strlen(risky_functions) + 2);
-		strcpy(new_functions, risky_functions);
-		strcat(new_functions, ",");
-		strcat(new_functions, disabled_functions);
-	    } else {
-		new_functions = emalloc(strlen(risky_functions) + 1);
-		strcpy(new_functions, risky_functions);
-	    }
+        // check disabled functions for symlink and link entries
+        case 1:
+            if(strlen(disabled_functions) > 0) {
+                new_functions = emalloc(strlen(disabled_functions) + strlen(risky_functions) + 2);
+                strcpy(new_functions, risky_functions);
+                strcat(new_functions, ",");
+                strcat(new_functions, disabled_functions);
+            } else {
+                new_functions = emalloc(strlen(risky_functions) + 1);
+                strcpy(new_functions, risky_functions);
+            }
             zend_string *new_functions2;
             new_functions2 = zend_string_init(new_functions, strlen(new_functions), 0);
             zend_string *dfstring;
             dfstring = zend_string_init("disable_functions", sizeof("disable_functions") - 1, 0);
             zend_alter_ini_entry(dfstring, new_functions2, PHP_INI_SYSTEM, PHP_INI_STAGE_ACTIVATE);
-	    efree(new_functions);
-	    break;
-	default:
-	    break;
+            efree(new_functions);
+            break;
+        default:
+            break;
     }
 }
 

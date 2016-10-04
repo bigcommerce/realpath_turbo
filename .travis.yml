@@ -1,0 +1,10 @@
+language: php
+php:
+  - 7.0
+script:
+  - phpize
+  - ./configure
+  - make
+  - make install
+  - phpenv config-add .travis.ini
+  - php -i | grep -i realpath
